@@ -33,7 +33,7 @@
              <div class="col">
                 <img src="images/wind.png">
                 <div>
-                    <p class="windy">15 km/h</p>
+                    <p class="wind">15 km/h</p>
                     <p>Wind Speed</p>
                 </div>
             </div>
@@ -44,8 +44,10 @@
 
 const apiKey= "bc25f90cdd2da7dbef9216fc2b5f9ae3";
 const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
 const searchBox = document.querySelector(".search input");
 const searchBtn = document.querySelector(".search button");
+const weatherIcon = document.querySelector(".weather-icon");
 async function checkWeather(city){
     const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
     var data = await response.json();
@@ -55,7 +57,7 @@ async function checkWeather(city){
     document.querySelector(".city").innerHTML = data.name;
     document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°c";
     document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
-    document.querySelector(".sind").innerHTML = data.wind.speed + " km/h";
+    document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
 
     if(data.weather[0].main == "Clouds"){
         weatherIcon.src = "images/clouds.png";
