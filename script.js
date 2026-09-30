@@ -93,9 +93,9 @@ function renderForecast(list) {
   const middayEntries = list.filter((entry) => entry.dt_txt.includes("12:00:00")).slice(0, 5);
 
   forecastStrip.innerHTML = "";
-  middayEntries.forEach((entry) => {
+  middayEntries.forEach((entry, i) => {
     const day = document.createElement("div");
-    day.className = "forecast-day";
+    day.className = i === 0 ? "forecast-day today" : "forecast-day";
 
     const label = new Date(entry.dt * 1000).toLocaleDateString(undefined, { weekday: "short" });
 

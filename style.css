@@ -1,5 +1,5 @@
 /* ---------------------------------------------------
-   Tokens — tweak these to reskin the whole dashboard
+   Tokens — warna & font sama seperti versi asli
 --------------------------------------------------- */
 :root {
   --bg: #F5F8FA;
@@ -13,7 +13,14 @@
   --font-display: "Space Grotesk", sans-serif;
   --font-mono: "IBM Plex Mono", monospace;
 
-  --radius: 4px;
+  /* turunan dari warna putih yang sama (hanya opacity) */
+  --soft: rgba(255, 255, 255, 0.16);
+  --soft-strong: rgba(255, 255, 255, 0.3);
+  --hairline: rgba(255, 255, 255, 0.28);
+
+  --radius-lg: 32px;
+  --radius-md: 20px;
+  --radius-pill: 999px;
 }
 
 * { box-sizing: border-box; }
@@ -25,12 +32,18 @@ body {
   color: var(--ink);
   font-family: var(--font-display);
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
 .dashboard {
-  max-width: 1040px;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 32px 24px 64px;
+  padding: 28px 24px 64px;
+}
+
+:focus-visible {
+  outline: 3px solid var(--sun);
+  outline-offset: 3px;
 }
 
 /* ---------------------------------------------------
@@ -41,9 +54,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--line);
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .brand {
@@ -53,56 +64,69 @@ body {
 }
 
 .brand-mark {
-  font-size: 22px;
+  font-size: 26px;
   color: var(--sun);
+  line-height: 1;
 }
 
 .brand-name {
   font-weight: 600;
-  font-size: 18px;
+  font-size: 19px;
   letter-spacing: 0.01em;
+  color: #4A78A0;
 }
 
 .search {
   display: flex;
   align-items: center;
   background: white;
-  border: 1px solid var(--line);
-  border-radius: 12px var(--radius);
-  overflow: hidden;
-  width: 320px;
-  max-width: 50vw;
+  border-radius: var(--radius-pill);
+  padding: 4px 4px 4px 20px;
+  width: 340px;
+  max-width: 55vw;
+  box-shadow: 0 6px 20px rgba(74, 120, 160, 0.18);
+}
+
+.search:focus-within {
+  box-shadow: 0 0 0 3px var(--sun), 0 6px 20px rgba(74, 120, 160, 0.18);
 }
 
 .search input {
   flex: 1;
+  min-width: 0;
   border: none;
   outline: none;
-  padding: 10px 14px;
+  padding: 10px 0;
   font-family: var(--font-display);
-  font-size: 14px;
+  font-size: 15px;
   color: black;
   background: transparent;
 }
 
-search input::placeholder {
-  color: #FFFFFF;
+.search input::placeholder {
+  color: #6B96B8;
   opacity: 1;
 }
 
 .search button {
   border: none;
-  border-left: 1px solid var(--line);
-  background: var(--panel);
-  padding: 8px 14px;
+  background: #4A78A0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
   cursor: pointer;
+  flex-shrink: 0;
 }
+
+.search button:hover { background: #6B96B8; }
 
 .search button img {
   width: 16px;
   height: 16px;
   display: block;
-  opacity: 0.7;
+  filter: brightness(0) invert(1);
 }
 
 /* ---------------------------------------------------
@@ -111,8 +135,8 @@ search input::placeholder {
 .status {
   font-family: var(--font-mono);
   font-size: 13px;
-  color: var(--rain);
-  margin: -8px 0 20px;
+  color: #4A78A0;
+  margin: -12px 0 20px 4px;
 }
 
 .status.error { color: #B8462F; }
@@ -122,167 +146,231 @@ search input::placeholder {
 --------------------------------------------------- */
 .grid {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: 1.25fr 1fr;
   grid-template-areas:
     "hero readouts"
     "forecast forecast";
-  gap: 20px;
+  gap: 24px;
 }
 
 .panel {
   background: var(--panel-bg);
-  border-radius: var(--radius);
-  padding: 24px;
-  border-radius :15px;
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: 0 18px 40px rgba(74, 120, 160, 0.22);
+}
+
+/* Forecast tidak butuh panel besar — kartunya sendiri yang jadi fokus */
+.panel.forecast {
+  background: none;
+  box-shadow: none;
+  padding: 0;
 }
 
 .panel-title {
-  margin: 0 0 16px;
-  font-size: 13px;
-  font-weight: 500;
+  margin: 0 0 18px;
+  font-size: 15px;
+  font-weight: 600;
   color: var(--muted);
   letter-spacing: 0.01em;
+}
+
+.forecast .panel-title {
+  color: #4A78A0;
+  margin-left: 6px;
 }
 
 /* ---------------------------------------------------
    Hero
 --------------------------------------------------- */
-.hero { grid-area: hero; display: flex; flex-direction: column; justify-content: space-between; }
+.hero {
+  grid-area: hero;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 380px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* cahaya matahari lembut di pojok, memakai warna --sun yang sudah ada */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: -90px;
+  right: -90px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--sun) 0%, transparent 68%);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.hero > * { position: relative; }
 
 .hero-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  gap: 16px;
 }
 
 .city {
   margin: 0;
-  font-size: 22px;
+  font-size: 30px;
   font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .meta {
-  margin: 4px 0 0;
+  margin: 8px 0 0;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
 }
 
 .weather-icon {
-  width: 56px;
-  height: 56px;
+  width: 132px;
+  height: 132px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.18));
 }
 
 .hero-bottom {
   display: flex;
-  align-items: baseline;
-  gap: 14px;
-  margin-top: 24px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  margin-top: 32px;
 }
 
 .temp {
-  font-size: 72px;
+  font-size: 120px;
   font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.02em;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
 }
 
 .condition {
-  font-size: 15px;
+  font-size: 20px;
   color: var(--muted);
   text-transform: capitalize;
+  background: var(--soft);
+  padding: 6px 16px;
+  border-radius: var(--radius-pill);
 }
 
 /* ---------------------------------------------------
-   Readouts
+   Readouts — daftar baris, bukan kotak 2×3
 --------------------------------------------------- */
 .readouts { grid-area: readouts; }
 
 .readout-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  background: rgba(255, 255, 255, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius:12px;
+  display: flex;
+  flex-direction: column;
 }
 
 .readout {
-  background: transparent; /* atau: rgba(0, 0, 0, 0.12) kalau mau efek kartu sedikit gelap */
-  padding: 14px 16px;
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--hairline);
 }
 
+.readout:last-child { border-bottom: none; padding-bottom: 0; }
+.readout:first-child { padding-top: 0; }
+
 .readout-label {
-  font-size: 17 px;
+  font-size: 16px;
   color: var(--muted);
 }
 
 .readout-value {
   font-family: var(--font-mono);
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .readout-value small {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
-  margin-left: 2px;
+  margin-left: 3px;
 }
 
-.readout-value.mono { font-size: 14px; }
+.readout-value.mono { font-size: 16px; }
 
 /* ---------------------------------------------------
-   Forecast strip
+   Forecast — lima kartu terpisah, hari pertama disorot
 --------------------------------------------------- */
 .forecast { grid-area: forecast; }
 
 .forecast-strip {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 1px;
-  background: rgba(255, 255, 255, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius:12px;
+  gap: 16px;
 }
 
 .forecast-day {
-  background: var(--panel);
-  padding: 16px 8px;
+  background: var(--panel-bg);
+  border-radius: var(--radius-md);
+  padding: 20px 8px 18px;
   text-align: center;
+  box-shadow: 0 10px 24px rgba(74, 120, 160, 0.18);
+}
+
+.forecast-day.today {
+  box-shadow: 0 0 0 3px var(--sun), 0 10px 24px rgba(74, 120, 160, 0.18);
 }
 
 .forecast-day .day-label {
-  font-size: 12px;
+  font-size: 15px;
+  font-weight: 600;
   color: var(--muted);
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .forecast-day img {
-  width: 85px;
-  height: 85px;
-  margin-bottom: 10px;
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  margin-bottom: 8px;
 }
 
 .forecast-day .day-temps {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 16px;
+  font-weight: 500;
 }
 
-.forecast-day .day-temps .lo { color: var(--muted); }
+.forecast-day .day-temps .lo {
+  color: var(--muted);
+  opacity: 0.7;
+  margin-left: 4px;
+}
 
 /* ---------------------------------------------------
-   Responsive: collapse to a single mobile-friendly column
+   Responsive
 --------------------------------------------------- */
 @media (max-width: 720px) {
+  .dashboard { padding: 20px 16px 48px; }
   .grid {
     grid-template-columns: 1fr;
     grid-template-areas: "hero" "readouts" "forecast";
+    gap: 18px;
   }
+  .panel { padding: 24px; }
+  .hero { min-height: 0; }
+  .weather-icon { width: 96px; height: 96px; }
+  .temp { font-size: 88px; }
   .search { width: 100%; max-width: none; }
-  .topbar { flex-wrap: wrap; }
-  .temp { font-size: 56px; }
-  .forecast-strip { grid-template-columns: repeat(5, minmax(60px, 1fr)); overflow-x: auto; }
+  .topbar { flex-wrap: wrap; gap: 16px; }
+  .forecast-strip {
+    grid-template-columns: repeat(5, minmax(96px, 1fr));
+    overflow-x: auto;
+    padding-bottom: 14px;
+  }
 }
