@@ -1,99 +1,106 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weather Station</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>weather app</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <div class="dashboard">
-
-    <!-- Top bar -->
-    <header class="topbar">
-      <div class="brand">
-        <span class="brand-mark">◐</span>
-        <span class="brand-name">weatherpop</span>
-      </div>
-      <form class="search" id="searchForm">
-        <input type="text" id="cityInput" placeholder="Search a city…" spellcheck="false" autocomplete="off">
-        <button type="submit" aria-label="Search">
-          <img src="images/search.png" alt="">
-        </button>
-      </form>
-    </header>
-
-    <!-- Status line: shows loading / error without blocking the layout -->
-    <p class="status" id="status" hidden></p>
-
-    <main class="grid">
-
-      <!-- Hero: current conditions -->
-      <section class="hero panel">
-        <div class="hero-top">
-          <div>
-            <h1 class="city" id="city">Jakarta</h1>
-            <p class="meta" id="dateTime">—</p>
-          </div>
-          <img src="images/clouds.png" alt="" class="weather-icon" id="weatherIcon">
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="enter city name" spellcheck="false">
+            <button><img src="images/search.png" alt="search"></button>
         </div>
 
-        <div class="hero-bottom">
-          <span class="temp" id="temp">—°</span>
-          <span class="condition" id="condition">Loading…</span>
+        <p class="error" style="display:none; color:#ffb4b4; margin-top:10px; text-align:left;">
+            Kota tidak ditemukan
+        </p>
+
+        <div class="weather">
+            <img src="images/rain.png" alt="rain" class="weather-icon">
+            <h1 class="temp">22°c</h1>
+            <h2 class="city">New York</h2>
+            <div class="details">
+                <div class="col">
+                    <img src="images/humidity.png" alt="humidity">
+                    <div>
+                        <p class="humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <img src="images/wind.png" alt="wind">
+                    <div>
+                        <p class="windy">15 km/h</p>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </section>
+    </div>
 
-      <!-- Readouts: instrument-style data grid -->
-      <section class="readouts panel">
-        <h2 class="panel-title">Readouts</h2>
-        <div class="readout-grid">
-          <div class="readout">
-            <span class="readout-label">humidity</span>
-            <span class="readout-value" id="humidity">—<small>%</small></span>
-          </div>
-          <div class="readout">
-            <span class="readout-label">wind</span>
-            <span class="readout-value" id="wind">—<small>km/h</small></span>
-          </div>
-          <div class="readout">
-            <span class="readout-label">feels like</span>
-            <span class="readout-value" id="feelsLike">—<small>°</small></span>
-          </div>
-          <div class="readout">
-            <span class="readout-label">pressure</span>
-            <span class="readout-value" id="pressure">—<small>hPa</small></span>
-          </div>
-          <div class="readout">
-            <span class="readout-label">visibility</span>
-            <span class="readout-value" id="visibility">—<small>km</small></span>
-          </div>
-          <div class="readout">
-            <span class="readout-label">sunrise · sunset</span>
-            <span class="readout-value mono" id="sun">—:— · —:—</span>
-          </div>
-        </div>
-      </section>
+    <script>
+        // GANTI dengan API key barumu dari openweathermap.org
+        // (jangan pakai key lama karena sudah terlanjur terlihat publik)
+        const apiKey = "API_KEY_KAMU";
+        const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
 
-      <!-- Forecast strip -->
-      <section class="forecast panel">
-        <h2 class="panel-title">5-day outlook</h2>
-        <div class="forecast-strip" id="forecastStrip">
-          <!-- filled by script.js -->
-        </div>
-      </section>
+        const searchBox = document.querySelector(".search input");
+        const searchBtn = document.querySelector(".search button");
+        const weatherIcon = document.querySelector(".weather-icon");
+        const errorMsg = document.querySelector(".error");
 
-    </main>
+        async function checkWeather(city) {
+            if (!city.trim()) return;
 
-    <!-- Room for the next feature: charts, favorites, alerts, unit toggle, etc. -->
-    <!-- <section class="panel" id="futureFeature"></section> -->
+            try {
+                const response = await fetch(apiUrl + encodeURIComponent(city) + `&appid=${apiKey}`);
 
-  </div>
+                if (!response.ok) {
+                    errorMsg.textContent = response.status === 404
+                        ? "Kota tidak ditemukan"
+                        : "Gagal mengambil data cuaca (cek API key kamu)";
+                    errorMsg.style.display = "block";
+                    return;
+                }
 
-  <script src="script.js"></script>
+                const data = await response.json();
+                errorMsg.style.display = "none";
+
+                document.querySelector(".city").innerHTML = data.name;
+                document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°c";
+                document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+                // API metric memberi kecepatan angin dalam m/s, dikonversi ke km/h
+                document.querySelector(".windy").innerHTML = Math.round(data.wind.speed * 3.6) + " km/h";
+
+                const icons = {
+                    Clouds: "clouds",
+                    Clear: "clear",
+                    Rain: "rain",
+                    Drizzle: "drizzle",
+                    Mist: "mist"
+                };
+                const icon = icons[data.weather[0].main];
+                if (icon) {
+                    weatherIcon.src = `images/${icon}.png`;
+                }
+            } catch (error) {
+                errorMsg.textContent = "Gagal terhubung. Cek koneksi internetmu.";
+                errorMsg.style.display = "block";
+                console.error(error);
+            }
+        }
+
+        searchBtn.addEventListener("click", () => {
+            checkWeather(searchBox.value);
+        });
+
+        // Bisa juga tekan Enter untuk mencari
+        searchBox.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                checkWeather(searchBox.value);
+            }
+        });
+    </script>
 </body>
 </html>
