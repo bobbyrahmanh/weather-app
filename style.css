@@ -160,7 +160,6 @@ body {
   box-shadow: 0 18px 40px rgba(74, 120, 160, 0.22);
 }
 
-/* Forecast tidak butuh panel besar — kartunya sendiri yang jadi fokus */
 .panel.forecast {
   background: none;
   box-shadow: none;
@@ -193,7 +192,6 @@ body {
   overflow: hidden;
 }
 
-/* cahaya matahari lembut di pojok, memakai warna --sun yang sudah ada */
 .hero::before {
   content: "";
   position: absolute;
@@ -261,9 +259,6 @@ body {
   border-radius: var(--radius-pill);
 }
 
-/* ---------------------------------------------------
-   Readouts — daftar baris, bukan kotak 2×3
---------------------------------------------------- */
 .readouts { grid-area: readouts; }
 
 .readout-grid {
@@ -303,9 +298,6 @@ body {
 
 .readout-value.mono { font-size: 16px; }
 
-/* ---------------------------------------------------
-   Forecast — lima kartu terpisah, hari pertama disorot
---------------------------------------------------- */
 .forecast { grid-area: forecast; }
 
 .forecast-strip {

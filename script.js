@@ -1,4 +1,4 @@
-const apiKey = "bc25f90cdd2da7dbef9216fc2b5f9ae3";
+const apiKey = "placeholder"; // Replace with your OpenWeatherMap API key
 const currentUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
 const forecastUrl = "https://api.openweathermap.org/data/2.5/forecast?units=metric&q=";
 
